@@ -1,2 +1,2 @@
 # zvvradio
-Repo of zvvradio
+https://zvvubuntu.blogspot.com/
