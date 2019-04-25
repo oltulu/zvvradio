@@ -19,7 +19,7 @@ if sys.platform.startswith("linux"):
 		os.mkdir(PLS_FOLDER)
 	#config.ini
 	CONFIG_PATH = os.path.join(APP_FOLDER, "config.ini")
-	if not os.path.exists(APP_FOLDER):
+	if not os.path.exists(CONFIG_PATH):
 		src_path = os.path.join(os.getcwd(), "config.ini")
 		dst_path = APP_FOLDER
 		shutil.copy(src_path, dst_path)
