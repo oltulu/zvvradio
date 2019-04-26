@@ -56,7 +56,7 @@ class Widgets(QWidget):
 		self.button_record = Tool_button()
 		self.button_record.set_info(QIcon(':/record_icon.png'), "Record")
 		self.button_record.setCheckable(True)
-		self.button_record.toggled.connect(self.press_record)
+		self.button_record.clicked.connect(self.press_record)
 		self.hbox_control.addWidget(self.button_record)
 		#volume
 		self.vbox_volume = QVBoxLayout()
@@ -127,7 +127,13 @@ class Widgets(QWidget):
 		self.tabber.addTab(self.tab4, QIcon(":/config_icon.png"), "")
 		
 		###autorun
-		self.volume_change(int(self.SETTINGS.value('config/volume')))
+		try:
+			volume = int(self.SETTINGS.value('config/volume'))
+			if volume <= 0:
+				volume = 30
+		except:
+			volume = 30
+		self.volume_change(volume)
 		
 ##########################################################################################
 
@@ -147,32 +153,34 @@ class Widgets(QWidget):
 		if copy_text:
 			QApplication.clipboard().setText(copy_text)
 
-	def press_record(self, record_state):
+	def press_record(self):
 		"""Press record"""
-		if record_state:
-			time_current = time.strftime('%Y%m%d_%H%M%S', time.gmtime())
-			file_name = "zvvradio_{0}_record.ac3".format(time_current)
-			try:
+		if self.PLAYER.get_state() == vlc.State.Playing:
+			record_state = self.button_record.isChecked()
+			if record_state:
+				time_current = time.strftime('%Y%m%d_%H%M%S', time.gmtime())
+				station_name = self.LABEL_STATION.text().split(' ')[0]
+				file_name = "{0}_{1}_record.mp3".format(station_name, time_current)
 				music_path = QStandardPaths.writableLocation(QStandardPaths.MusicLocation)
-			except:
-				music_path = QDir.homePath()
-			music_file_path = os.path.join(music_path, file_name)
-			try:
-				self.PLAYER._set_property('record-file', music_file_path)
-			except:
-				pass
+				music_file_path = os.path.join(music_path, file_name)
+				station_name = 256
+				transcode = "#transcode{vcodec=none,acodec=mp3,ab=256,channels=2,samplerate=44100}"
+				params = ":duplicate{dst=display,dst=std{access=file,mux=,dst=" + music_file_path + "}}"
+				options = ("sout=" + transcode + params)
+				self.PLAYER.set_mrl(self.CURRENT_URL, options)
+				self.PLAYER.play()
+			else:
+				self.cancel_record()
+				title = self.LABEL_STATION.text()
+				self.player_play(title, self.CURRENT_URL)
 		else:
 			self.cancel_record()
 			
 	def cancel_record(self):
 		"""Cancel record"""
-		try:
-			if self.PLAYER._get_property('record-file'):
-				self.PLAYER._set_property('record-file', '')
-			if self.button_record.isChecked():
-				self.button_record.setChecked(False)
-		except:
-			pass
+		self.PLAYER.stop()
+		self.button_record.setChecked(False)
+		self.PLAYER.set_mrl('')
 		
 	def clear_labels(self):
 		"""Clear artist"""
@@ -199,9 +207,8 @@ class Widgets(QWidget):
 		
 	def press_button_stop(self):
 		"""Press controls"""
-		self.PLAYER.stop()
+		self.cancel_record()
 		self.clear_labels()
-		#self.cancel_record()
 
 	def volume_change(self, value):
 		"""Volume change"""
@@ -212,7 +219,7 @@ class Widgets(QWidget):
 		
 	def player_play(self, title, url):
 		"""Player play"""
-		#self.cancel_record()
+		self.cancel_record()
 		self.set_title(title)
 		self.CURRENT_URL = url
 		self.media = self.instance.media_new(url)
