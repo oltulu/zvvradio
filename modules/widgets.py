@@ -120,7 +120,7 @@ class Widgets(QWidget):
 		self.search_tab = search_radio.Search_radio()
 		self.tabber.addTab(self.search_tab, QIcon(":/search_icon.png"), "")
 		#EQ_TAB
-		self.eq_tab = equalizer.Equalizer()
+		self.eq_tab = equalizer.Equalizer(self)
 		self.tabber.addTab(self.eq_tab, QIcon(":/eq_icon.png"), "")
 		#TOOLS_TAB
 		self.tab4 = tab4.Tab4_config(self)
@@ -163,7 +163,6 @@ class Widgets(QWidget):
 				file_name = "{0}_{1}_record.mp3".format(station_name, time_current)
 				music_path = QStandardPaths.writableLocation(QStandardPaths.MusicLocation)
 				music_file_path = os.path.join(music_path, file_name)
-				station_name = 256
 				transcode = "#transcode{vcodec=none,acodec=mp3,ab=256,channels=2,samplerate=44100}"
 				params = ":duplicate{dst=display,dst=std{access=file,mux=,dst=" + music_file_path + "}}"
 				options = ("sout=" + transcode + params)
