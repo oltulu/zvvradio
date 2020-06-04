@@ -98,7 +98,7 @@ class Tab4_config(QWidget):
 		#add combobox
 		self.combobox_langs = QComboBox()
 		self.hbox_langs.addWidget(self.combobox_langs)
-		list_langs = [self.tr('Choose:'),'System','Eng','Rus','Ukr',]
+		list_langs = [self.tr('Choose:'),'System','Eng','Rus','Tr','Ukr',]
 		for item in list_langs:
 			self.combobox_langs.addItem(item)
 		self.combobox_langs.activated.connect(self.change_language)
@@ -223,6 +223,8 @@ class Tab4_config(QWidget):
 			self.settings.setValue('config/language','russian')
 		if current_item == 4:
 			self.settings.setValue('config/language','ukrainian')
+		if current_item == 5:
+			self.settings.setValue('config/language','turkish')
 		self.settings.sync()
 		
 	def press_add_station(self):
