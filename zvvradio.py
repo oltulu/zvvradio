@@ -78,11 +78,15 @@ if CURRENT_LANG == 'system':
 		TRANSLATOR.load('./langs/lang_rus')
 	if 'uk' in lang:
 		TRANSLATOR.load('./langs/lang_ukr')
+	if 'tr' in lang:
+		TRANSLATOR.load('./langs/lang_tr')
 else:
 	if CURRENT_LANG == 'russian':
 		TRANSLATOR.load('./langs/lang_rus')
 	if CURRENT_LANG == 'ukrainian':
 		TRANSLATOR.load('./langs/lang_ukr')
+	if CURRENT_LANG == 'turkish':
+		TRANSLATOR.load('./langs/lang_tr')
 APP.installTranslator(TRANSLATOR)
 WIN = ZVVRadio()
 sys.exit(APP.exec_())
